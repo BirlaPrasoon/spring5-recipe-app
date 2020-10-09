@@ -5,7 +5,8 @@ import guru.springframework.repositories.CategoryRepository;
 import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.repositories.UnitOfMeasureRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Component
 @Slf4j
-public class BootstrappingData implements CommandLineRunner {
+public class BootstrappingData implements ApplicationListener<ContextRefreshedEvent> {
 
     private final CategoryRepository categoryRepository;
     private final RecipeRepository recipeRepository;
@@ -28,12 +29,9 @@ public class BootstrappingData implements CommandLineRunner {
         this.unitOfMeasureRepository = unitOfMeasureRepository;
     }
 
-    @Override public void run(String... args) {
-        recipeRepository.saveAll(getRecipes());
-        log.debug("Loading Bootstrap Data");
-    }
-
     private List<Recipe> getRecipes() {
+
+        System.out.println("----------------------------------====================================-9999999999999999999999999999999999999999999999999999999999999999999999999999999");
 
         List<Recipe> recipes = new ArrayList<>(2);
 //
@@ -208,4 +206,9 @@ public class BootstrappingData implements CommandLineRunner {
         return recipes;
     }
 
+    @Override public void onApplicationEvent(
+            ContextRefreshedEvent contextRefreshedEvent) {
+        recipeRepository.saveAll(getRecipes());
+        log.info("Loading Bootstrap Data");
+    }
 }
